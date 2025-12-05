@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'main.dart';
+import 'api_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -8,190 +10,189 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+
   bool showPassword = false;
-  bool rememberMe = false;
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
     return Scaffold(
-      body: Row(
-        children: [
-          // ---------------- LEFT SIDE (FORM) ----------------
-          Expanded(
-            flex: 6,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 60),
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                // 🔵 🔵  اللوجو + اسم المشروع في الأعلى 🔵 🔵
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const MyApp()),
+                    );
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // LOGO + TITLE
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Sign In",
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Image.asset(
-                            "assets/images/logo.png", // حطي صورة اللوجو هنا
-                            height: 90,
-                          ),
-                        ],
+                      // اللوجو
+                      Image.asset(
+                        "assets/images/logo.png", // ← غيّري المسار لو عايزة
+                        height: 45,
                       ),
-                      const SizedBox(height: 50),
-
-                      // USERNAME
-                      Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(color: Colors.grey, width: 2),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.person),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: TextField(
-                                decoration: const InputDecoration(
-                                  hintText: "Enter your username or email",
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                          ],
+                      const SizedBox(width: 180),
+                      // اسم البروجكت
+                      const Text(
+                        "PharmaLink",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
                         ),
                       ),
-                      const SizedBox(height: 30),
-
-                      // PASSWORD
-                      Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(color: Colors.grey, width: 2),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.lock),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: TextField(
-                                obscureText: !showPassword,
-                                decoration: const InputDecoration(
-                                  hintText: "Enter your Password",
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() => showPassword = !showPassword);
-                              },
-                              child: Icon(
-                                showPassword
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // REMEMBER ME
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: rememberMe,
-                            onChanged: (v) =>
-                                setState(() => rememberMe = v!),
-                          ),
-                          const Text("Remember Me"),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-
-                      // LOGIN BUTTON
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF00A896),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          onPressed: () {},
-                          child: const Text(
-                            "Login",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 30),
-
-                      // REGISTER LINK
-                      Center(
-                        child: Column(
-                          children: [
-                            const Text("If you don't have an account register"),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text("You can "),
-
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(context, '/register');
-                                  },
-                                  child: const Text(
-                                    "Register here!",
-                                    style: TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      )
-
                     ],
                   ),
                 ),
-              ),
-            ),
-          ),
 
-          // ---------------- RIGHT SIDE (IMAGE) ----------------
-          Expanded(
-            flex: 4,
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/pharmacy.jpg"),
-                  fit: BoxFit.cover,
+                const SizedBox(height: 20),
+
+                // 🟦 Image Banner (نفس الصورة اللي عندك)
+                SizedBox(
+                  height: 250,
+                  width: double.infinity,
+                  child: Image.asset(
+                    "assets/images/pharmacy.jpg",
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
+
+                const SizedBox(height: 30),
+
+                const Text(
+                  "Welcome Back",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.teal,
+                  ),
+                ),
+                const SizedBox(height: 40),
+
+                _field("Username", usernameController),
+                const SizedBox(height: 20),
+
+                _passwordField("Password", passwordController),
+                const SizedBox(height: 30),
+
+                // Login Button
+                GestureDetector(
+                  onTap: () async {
+                    var result = await ApiService().login(
+                      userName: usernameController.text.trim(),
+                      password: passwordController.text.trim(),
+                    );
+
+                    if (result["success"] == true) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Login Successful")),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "Login Failed: ${result["message"]}"),
+                        ),
+                      );
+                    }
+                  },
+                  child: Container(
+                    width: isMobile ? double.infinity : 260,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      color: Colors.teal,
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Login",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                TextButton(
+                  onPressed: () {},
+                  child: const Text("Forgot Password?"),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  // ---------------------- Fields -----------------------
+
+  Widget _field(String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey.shade200,
+            hintText: label,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _passwordField(String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          obscureText: !showPassword,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey.shade200,
+            hintText: label,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                  showPassword ? Icons.visibility : Icons.visibility_off),
+              onPressed: () {
+                setState(() {
+                  showPassword = !showPassword;
+                });
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

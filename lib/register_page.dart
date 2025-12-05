@@ -1,225 +1,242 @@
 import 'package:flutter/material.dart';
+import 'api_service.dart';
+import 'login_page.dart';
 
 class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
+
   @override
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final drnameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final cityController = TextEditingController();
+  final stateController = TextEditingController();
+  final streetController = TextEditingController();
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  final licenseController = TextEditingController();
+  final pdfUrlController = TextEditingController();
 
-  // Controllers
-  final pharmacyName = TextEditingController();
-  final doctorName = TextEditingController();
-  final email = TextEditingController();
-  final phone = TextEditingController();
-  final city = TextEditingController();
-  final stateC = TextEditingController();
-  final street = TextEditingController();
-  final userName = TextEditingController();
-  final password = TextEditingController();
-  final confirmPassword = TextEditingController();
-  final license = TextEditingController();
-  final website = TextEditingController();
-
-  bool showPassword = false;
-  bool showConfirmPassword = false;
-
-  // Alert
-  void showAlert(String msg, Color color) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(msg, style: const TextStyle(fontSize: 16)),
-        backgroundColor: color,
-        duration: const Duration(seconds: 3),
-      ),
-    );
-  }
-
-  // Validate Password
-  bool validatePassword() {
-    if (password.text != confirmPassword.text) {
-      showAlert("Passwords are not equal!", Colors.red);
-      return false;
-    }
-    if (password.text.length < 8) {
-      showAlert("Password must be at least 8 characters!", Colors.red);
-      return false;
-    }
-    final regex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$');
-    if (!regex.hasMatch(password.text)) {
-      showAlert("Password must contain letters, numbers, and special character!", Colors.red);
-      return false;
-    }
-    return true;
-  }
-
-  Future<void> register() async {
-    if (!_formKey.currentState!.validate()) return;
-    if (!validatePassword()) return;
-
-    final phoneText = phone.text.trim();
-    if (!RegExp(r'^\d{11}$').hasMatch(phoneText)) {
-      showAlert("Phone number must be 11 digits", Colors.red);
-      return;
-    }
-
-    final body = {
-      "name": pharmacyName.text.trim(),
-      "drName": doctorName.text.trim(),
-      "email": email.text.trim(),
-      "phoneNumber": phone.text.trim(),
-      "city": city.text.trim(),
-      "state": stateC.text.trim(),
-      "street": street.text.trim(),
-      "userName": userName.text.trim(),
-      "password": password.text.trim(),
-      "licenseNumber": license.text.trim(),
-      "pdfURL": website.text.trim(),
-    };
-
-    try {
-      final url = Uri.parse("https://pharmalink.runasp.net/api/requests/Register");
-      final response = await Future.wait([
-        Future.delayed(const Duration(seconds: 1)),
-      ]);
-
-      showAlert("Registered Successfully! Check email.", Colors.green);
-    } catch (e) {
-      showAlert("Error occurred, try later.", Colors.red);
-    }
-  }
-
-  Widget field(String label, TextEditingController c, {bool isPassword = false, bool isConfirm = false}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 16)),
-        const SizedBox(height: 6),
-        TextFormField(
-          controller: c,
-          obscureText: isPassword ? !showPassword : isConfirm ? !showConfirmPassword : false,
-          validator: (v) => v!.isEmpty ? "Required" : null,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: const Color(0xFFD9D9D9),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(25), borderSide: BorderSide.none),
-            suffixIcon: isPassword
-                ? IconButton(
-                icon: Icon(showPassword ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() => showPassword = !showPassword))
-                : isConfirm
-                ? IconButton(
-                icon: Icon(showConfirmPassword ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() => showConfirmPassword = !showConfirmPassword))
-                : null,
-          ),
-        ),
-      ],
-    );
-  }
+  bool obscurePass = true;
+  bool obscureConfirm = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff333333),
-      appBar: AppBar(
-        title: const Text("Register"),
-        backgroundColor: Colors.teal,
-      ),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: Container(
-          color: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                // Row 1
-                Row(
-                  children: [
-                    Expanded(child: field("Pharmacy Name:", pharmacyName)),
-                    const SizedBox(width: 10),
-                    Expanded(child: field("Doctor Name:", doctorName)),
-                  ],
-                ),
-                const SizedBox(height: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ===========================
+            // الصورة فوق
+            // ===========================
+            SizedBox(
+              height: 250,
+              width: double.infinity,
+              child: Image.asset(
+                "assets/images/pharmacy.jpg",
+                fit: BoxFit.cover,
+              ),
+            ),
 
-                // Row 2
-                Row(
-                  children: [
-                    Expanded(child: field("Email:", email)),
-                    const SizedBox(width: 10),
-                    Expanded(child: field("Phone Number:", phone)),
-                  ],
-                ),
-                const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-                // Row 3
-                Row(
-                  children: [
-                    Expanded(child: field("City:", city)),
-                    const SizedBox(width: 10),
-                    Expanded(child: field("State:", stateC)),
-                    const SizedBox(width: 10),
-                    Expanded(child: field("Street:", street)),
-                  ],
-                ),
-                const SizedBox(height: 20),
+            // ===========================
+            // محتوى الفورم
+            // ===========================
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Signup",
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
 
-                // Row 4
-                Row(
-                  children: [
-                    Expanded(child: field("User Name:", userName)),
-                    const SizedBox(width: 10),
-                    Expanded(child: field("Password:", password, isPassword: true)),
-                    const SizedBox(width: 10),
-                    Expanded(child: field("Confirm Password:", confirmPassword, isConfirm: true)),
-                  ],
-                ),
-                const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-                // Row 5
-                Row(
-                  children: [
-                    Expanded(child: field("License Number:", license)),
-                    const SizedBox(width: 10),
-                    Expanded(child: field("Website Link:", website)),
-                  ],
-                ),
+                  inputField("Pharmacy Name", nameController),
+                  inputField("Doctor Name", drnameController),
+                  inputField("Email", emailController),
+                  inputField("Phone Number", phoneController),
 
-                const SizedBox(height: 30),
+                  Row(
+                    children: [
+                      Expanded(child: inputField("City", cityController)),
+                      const SizedBox(width: 10),
+                      Expanded(child: inputField("State", stateController)),
+                    ],
+                  ),
 
-                // Button
-                SizedBox(
-                  width: 300,
-                  child: ElevatedButton(
-                    onPressed: register,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00A896),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
+                  inputField("Street", streetController),
+                  inputField("User Name", usernameController),
+
+                  passwordField("Password", passwordController, true),
+                  passwordField("Confirm Password", confirmPasswordController, false),
+
+                  Row(
+                    children: [
+                      Expanded(child: inputField("License Number", licenseController)),
+                      const SizedBox(width: 10),
+                      Expanded(child: inputField("PDF URL", pdfUrlController)),
+                    ],
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  // ===========================
+                  // زرار التسجيل
+                  // ===========================
+                  GestureDetector(
+                    onTap: () async {
+                      bool success = await ApiService().register(
+                        name: nameController.text.trim(),
+                        street: streetController.text.trim(),
+                        state: stateController.text.trim(),
+                        city: cityController.text.trim(),
+                        phoneNumber: phoneController.text.trim(),
+                        email: emailController.text.trim(),
+                        password: passwordController.text.trim(),
+                        licenseNumber: licenseController.text.trim(),
+                        userName: usernameController.text.trim(),
+                        drName: drnameController.text.trim(),
+                        pdfURL: pdfUrlController.text.trim(),
+                      );
+
+                      if (success) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Registration Successful")),
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginPage()),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Registration Failed")),
+                        );
+                      }
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.teal,
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Register",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 19,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
-                    child: const Text(
-                      "Register",
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ===========================
+                  // الانتقال للّوجين
+                  // ===========================
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("If you already have an account, "),
+                        GestureDetector(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const LoginPage()),
+                          ),
+                          child: const Text(
+                            "Login here!",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                ),
-
-                const SizedBox(height: 20),
-
-                GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, '/login'),
-                  child: const Text(
-                    "If you already have an account, Login here!",
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ===========================
+  // INPUT FIELD
+  // ===========================
+  Widget inputField(String label, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          filled: true,
+          fillColor: Colors.grey.shade200,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ===========================
+  // PASSWORD FIELD
+  // ===========================
+  Widget passwordField(
+      String label, TextEditingController controller, bool isMainPass) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextField(
+        controller: controller,
+        obscureText: isMainPass ? obscurePass : obscureConfirm,
+        decoration: InputDecoration(
+          labelText: label,
+          filled: true,
+          fillColor: Colors.grey.shade200,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          suffixIcon: IconButton(
+            icon: Icon(
+              (isMainPass ? obscurePass : obscureConfirm)
+                  ? Icons.visibility_off
+                  : Icons.visibility,
+            ),
+            onPressed: () {
+              setState(() {
+                if (isMainPass) {
+                  obscurePass = !obscurePass;
+                } else {
+                  obscureConfirm = !obscureConfirm;
+                }
+              });
+            },
           ),
         ),
       ),
