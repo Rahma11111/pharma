@@ -2,6 +2,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'api_service.dart';
+import 'main.dart';
+import 'profile.dart';
+import 'login_page.dart';
+import 'history_page.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -13,6 +17,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController companyController = TextEditingController();
   final TextEditingController medicineController = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   List<dynamic> allMedicines = [];
   List<dynamic> filteredMedicines = [];
@@ -43,7 +48,6 @@ class _SearchPageState extends State<SearchPage> {
 
     try {
       final data = await ApiService.getMedicines();
-      // تأكّد إن الداتا لست
       if (data is List) {
         setState(() {
           allMedicines = data;
@@ -66,32 +70,26 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  // Clean and normalize the image url returned from API
   String fixImageUrl(dynamic urlRaw) {
     if (urlRaw == null) return "";
     String url = urlRaw.toString().trim();
 
     if (url.isEmpty) return "";
 
-    // If already a complete URL, return as is
     if (url.startsWith("http://") || url.startsWith("https://")) {
       return url;
     }
 
-    // Replace backslashes with forward slashes
     url = url.replaceAll(r"\", "/");
 
-    // Remove multiple slashes
     while (url.contains("//")) {
       url = url.replaceAll("//", "/");
     }
 
-    // Ensure it starts with a slash
     if (!url.startsWith("/")) {
       url = "/$url";
     }
 
-    // Build full URL
     return "https://pharmalink.runasp.net$url";
   }
 
@@ -145,7 +143,6 @@ class _SearchPageState extends State<SearchPage> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              // call add to cart
               if (item["id"] != null) {
                 ApiService.addToCart(item["id"]);
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -156,6 +153,157 @@ class _SearchPageState extends State<SearchPage> {
             child: const Text("Add to cart"),
           )
         ],
+      ),
+    );
+  }
+
+  Widget _buildDrawer() {
+    return Drawer(
+      child: Container(
+        color: Colors.white,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Color(0xff008682),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: const Icon(
+                      Icons.local_pharmacy,
+                      size: 50,
+                      color: Color(0xff008682),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "PharmaLink",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // _buildDrawerItem(
+            //   icon: Icons.person,
+            //   title: "Profile",
+            //   onTap: () {
+            //     Navigator.pop(context);
+            //     Navigator.pushReplacement(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => const Profile()),
+            //     );
+            //   },
+            // ),
+            _buildDrawerItem(
+              icon: Icons.home,
+              title: "Home",
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.search,
+              title: "Search",
+              isSelected: true,
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.history,
+              title: "History",
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HistoryPage()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.shopping_cart,
+              title: "Cart",
+              onTap: () {
+                Navigator.pop(context);
+                // Navigate to Cart when page is ready
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Cart page coming soon")),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.info,
+              title: "About",
+              onTap: () {
+                Navigator.pop(context);
+                // Navigate to About when page is ready
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("About page coming soon")),
+                );
+              },
+            ),
+            const Divider(),
+            _buildDrawerItem(
+              icon: Icons.logout,
+              title: "Logout",
+              textColor: Colors.red,
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    bool isSelected = false,
+    Color? textColor,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: isSelected ? const Color(0xff008682).withOpacity(0.1) : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ListTile(
+        leading: Icon(
+          icon,
+          color: isSelected ? const Color(0xff008682) : (textColor ?? Colors.grey[700]),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: isSelected ? const Color(0xff008682) : (textColor ?? Colors.grey[800]),
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        onTap: onTap,
       ),
     );
   }
@@ -208,7 +356,7 @@ class _SearchPageState extends State<SearchPage> {
           Expanded(flex: 2, child: Center(child: Text("Drug", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
           Expanded(flex: 2, child: Center(child: Text("Company", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
           Expanded(flex: 1, child: Center(child: Text("Price", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
-          Expanded(flex: 1, child: Center(child: Text("Quantity", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
+          Expanded(flex: 1, child: Center(child: Text("Quty", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
           Expanded(flex: 1, child: Center(child: Text("Add", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
           Expanded(flex: 1, child: Center(child: Text("Photo", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
         ],
@@ -328,10 +476,18 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: const Text("Search Medicines"),
         backgroundColor: const Color(0xff008682),
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
       ),
+      drawer: _buildDrawer(),
       body: Column(
         children: [
           _searchFields(),
