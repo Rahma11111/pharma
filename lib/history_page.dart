@@ -6,7 +6,7 @@ import 'profile.dart';
 import 'main.dart';
 import 'search_page.dart';
 import 'login_page.dart';
-
+import 'cart_page.dart';
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
 
@@ -187,7 +187,10 @@ class _HistoryPageState extends State<HistoryPage> {
               title: "Cart",
               onTap: () {
                 Navigator.pop(context);
-                // Navigate to Cart
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CartPage()),
+                );
               },
             ),
             _buildDrawerItem(
@@ -253,10 +256,10 @@ class _HistoryPageState extends State<HistoryPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildFilterButton('All', 'all', Colors.blue),
-          _buildFilterButton('Pending', 'pending', Colors.red),
+          _buildFilterButton('All', 'all', Colors.grey),
+          _buildFilterButton('Pending', 'pending', Colors.orange),
           _buildFilterButton('Shipped', 'shipped', Colors.blue),
-          _buildFilterButton('Delivered', 'delivered', Colors.greenAccent),
+          _buildFilterButton('Delivered', 'delivered', Colors.green),
         ],
       ),
     );
@@ -271,7 +274,7 @@ class _HistoryPageState extends State<HistoryPage> {
           onPressed: () => filterByStatus(status),
           style: ElevatedButton.styleFrom(
             backgroundColor: isSelected ? color : color.withOpacity(0.3),
-            foregroundColor: isSelected ? Colors.white : color,
+            foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -283,6 +286,7 @@ class _HistoryPageState extends State<HistoryPage> {
             style: TextStyle(
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               fontSize: 14,
+              color: Colors.white,
             ),
           ),
         ),

@@ -6,6 +6,7 @@ import 'main.dart';
 import 'profile.dart';
 import 'login_page.dart';
 import 'history_page.dart';
+import 'cart_page.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -70,28 +71,28 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  String fixImageUrl(dynamic urlRaw) {
-    if (urlRaw == null) return "";
-    String url = urlRaw.toString().trim();
+  String fixImageUrl(dynamic rawUrl) {
+    if (rawUrl == null) return "";
 
-    if (url.isEmpty) return "";
+    // 1) Convert backslashes → forward slashes
+    String url = rawUrl.toString().replaceAll("\\", "/");
 
+    // 2) لو الرابط جاهز بالكامل
     if (url.startsWith("http://") || url.startsWith("https://")) {
       return url;
     }
 
-    url = url.replaceAll(r"\", "/");
-
-    while (url.contains("//")) {
-      url = url.replaceAll("//", "/");
+    // 3) لو الرابط جاي فيه uploads
+    if (url.contains("uploads")) {
+      url = "/uploads" + url.split("uploads").last;
     }
 
-    if (!url.startsWith("/")) {
-      url = "/$url";
-    }
+    // 4) Add base URL
+    const base = "https://pharmalink.runasp.net";
 
-    return "https://pharmalink.runasp.net$url";
+    return "$base$url";
   }
+
 
   void filterList() {
     String med = medicineController.text.trim().toLowerCase();
@@ -242,9 +243,9 @@ class _SearchPageState extends State<SearchPage> {
               title: "Cart",
               onTap: () {
                 Navigator.pop(context);
-                // Navigate to Cart when page is ready
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Cart page coming soon")),
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CartPage()),
                 );
               },
             ),
@@ -356,7 +357,7 @@ class _SearchPageState extends State<SearchPage> {
           Expanded(flex: 2, child: Center(child: Text("Drug", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
           Expanded(flex: 2, child: Center(child: Text("Company", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
           Expanded(flex: 1, child: Center(child: Text("Price", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
-          Expanded(flex: 1, child: Center(child: Text("Quty", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
+          Expanded(flex: 1, child: Center(child: Text("Quantity", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
           Expanded(flex: 1, child: Center(child: Text("Add", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
           Expanded(flex: 1, child: Center(child: Text("Photo", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
         ],
@@ -388,10 +389,24 @@ class _SearchPageState extends State<SearchPage> {
             flex: 1,
             child: Center(
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (med["id"] != null) {
-                    ApiService.addToCart(med["id"]);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Added to cart")));
+                    final success = await ApiService.addToCart(med["id"]);
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Added to cart successfully"),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Failed to add to cart"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   }
                 },
                 style: ElevatedButton.styleFrom(
