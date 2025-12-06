@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'api_service.dart';
-
+import 'search_page.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (_) => const MyApp()),
+                      MaterialPageRoute(builder: (_) => const SearchPage()),
                     );
                   },
                   child: Row(
@@ -98,15 +98,21 @@ class _LoginPageState extends State<LoginPage> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Login Successful")),
                       );
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SearchPage()),
+                      );
+
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(
-                              "Login Failed: ${result["message"]}"),
+                          content: Text("Login Failed: ${result["message"]}"),
                         ),
                       );
                     }
                   },
+
                   child: Container(
                     width: isMobile ? double.infinity : 260,
                     height: 55,
