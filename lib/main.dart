@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:convert';
-
+import 'splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,12 +22,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      home: SplashScreen(),
       title: 'Pharma Link',
       theme: ThemeData(
         primaryColor: const Color(0xFF00A8A3),
-        textTheme: GoogleFonts.openSansTextTheme(),
+        // textTheme: GoogleFonts.openSansTextTheme(),
       ),
-      home: const HomePage(),
+      // home: const HomePage(),
     );
   }
 }
@@ -397,11 +398,11 @@ class FooterWidget extends StatelessWidget {
           const SizedBox(height: 8),
           Row(
             children: [
-              _buildSocialIcon('https://www.facebook.com/mohmed.abd.el.naser.2025/', FontAwesomeIcons.facebook),
+              _buildSocialIcon('https://www.facebook.com/rahma.2025/', FontAwesomeIcons.facebook),
               const SizedBox(width: 12),
-              _buildSocialIcon('http://x.com/Mo_Zakeer', FontAwesomeIcons.twitter),
+              _buildSocialIcon('http://x.com/Rah_ma', FontAwesomeIcons.twitter),
               const SizedBox(width: 12),
-              _buildSocialIcon('https://www.linkedin.com/in/mohamed-abdelnaser-899262289/', FontAwesomeIcons.linkedin),
+              _buildSocialIcon('https://www.linkedin.com/in/Rahma_hassan-899262289/', FontAwesomeIcons.linkedin),
             ],
           ),
         ],
@@ -438,7 +439,7 @@ class FooterWidget extends StatelessWidget {
           InkWell(
             onTap: () {},
             child: const Text(
-              'Phone: +201096809082',
+              'Phone: +2010101010',
               style: TextStyle(color: Colors.white70, fontSize: 13),
             ),
           ),
