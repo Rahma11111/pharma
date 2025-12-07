@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'api_service.dart';
-import 'profile.dart';
+import 'profile_page.dart';
 import 'main.dart';
 import 'search_page.dart';
 import 'login_page.dart';
@@ -141,17 +141,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 ],
               ),
             ),
-            // _buildDrawerItem(
-            //   icon: Icons.person,
-            //   title: "Profile",
-            //   onTap: () {
-            //     Navigator.pop(context);
-            //     Navigator.pushReplacement(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => const ProfilePage()),
-            //     );
-            //   },
-            // ),
+
             _buildDrawerItem(
               icon: Icons.home,
               title: "Home",
@@ -194,13 +184,17 @@ class _HistoryPageState extends State<HistoryPage> {
               },
             ),
             _buildDrawerItem(
-              icon: Icons.info,
-              title: "About",
+              icon: Icons.person,
+              title: "Profile",
               onTap: () {
                 Navigator.pop(context);
-                // Navigate to About
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilePage()),
+                );
               },
             ),
+
             const Divider(),
             _buildDrawerItem(
               icon: Icons.logout,

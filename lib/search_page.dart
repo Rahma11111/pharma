@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'api_service.dart';
 import 'main.dart';
-import 'profile.dart';
+import 'profile_page.dart';
 import 'login_page.dart';
 import 'history_page.dart';
 import 'cart_page.dart';
@@ -197,17 +197,6 @@ class _SearchPageState extends State<SearchPage> {
                 ],
               ),
             ),
-            // _buildDrawerItem(
-            //   icon: Icons.person,
-            //   title: "Profile",
-            //   onTap: () {
-            //     Navigator.pop(context);
-            //     Navigator.pushReplacement(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => const Profile()),
-            //     );
-            //   },
-            // ),
             _buildDrawerItem(
               icon: Icons.home,
               title: "Home",
@@ -250,13 +239,13 @@ class _SearchPageState extends State<SearchPage> {
               },
             ),
             _buildDrawerItem(
-              icon: Icons.info,
-              title: "About",
+              icon: Icons.person,
+              title: "Profile",
               onTap: () {
                 Navigator.pop(context);
-                // Navigate to About when page is ready
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("About page coming soon")),
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilePage()),
                 );
               },
             ),
@@ -357,7 +346,7 @@ class _SearchPageState extends State<SearchPage> {
           Expanded(flex: 2, child: Center(child: Text("Drug", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
           Expanded(flex: 2, child: Center(child: Text("Company", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
           Expanded(flex: 1, child: Center(child: Text("Price", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
-          Expanded(flex: 1, child: Center(child: Text("Quantity", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
+          Expanded(flex: 1, child: Center(child: Text("Qunty", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
           Expanded(flex: 1, child: Center(child: Text("Add", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
           Expanded(flex: 1, child: Center(child: Text("Photo", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
         ],
@@ -413,7 +402,7 @@ class _SearchPageState extends State<SearchPage> {
                   backgroundColor: const Color(0xff008682),
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 ),
-                child: const Text("+", style: TextStyle(fontSize: 18)),
+                child: const Text("+", style: TextStyle(fontSize: 18,color: Colors.white)),
               ),
             ),
           ),

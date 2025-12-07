@@ -6,6 +6,8 @@ import 'main.dart';
 import 'search_page.dart';
 import 'history_page.dart';
 import 'login_page.dart';
+import 'summary_page.dart';
+import 'profile_page.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -291,12 +293,17 @@ class _CartPageState extends State<CartPage> {
               },
             ),
             _buildDrawerItem(
-              icon: Icons.info,
-              title: "About",
+              icon: Icons.person,
+              title: "Profile",
               onTap: () {
                 Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilePage()),
+                );
               },
             ),
+
             Divider(),
             _buildDrawerItem(
               icon: Icons.logout,
@@ -616,8 +623,15 @@ class _CartPageState extends State<CartPage> {
                   onPressed: cartItems.isEmpty
                       ? null
                       : () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Proceeding to checkout...")),
+                    // Navigate to Summary page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SummaryPage(
+                          cartItems: cartItems,
+                          totalPrice: totalPrice,
+                        ),
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -628,8 +642,8 @@ class _CartPageState extends State<CartPage> {
                     ),
                   ),
                   child: Text(
-                    "SUMMARY",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    "SUMMERY",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white),
                   ),
                 ),
               ),

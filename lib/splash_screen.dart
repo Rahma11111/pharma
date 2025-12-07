@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     // بعد 3 ثواني نروح للهوم
-    Timer(Duration(seconds: 3), () {
+    Timer(Duration(seconds: 4), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
