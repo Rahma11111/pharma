@@ -251,7 +251,7 @@ class _ProfilePageState extends State<ProfilePage> {
           buildInfoCard("Phone Number", data["pharmacyPhoneNumber"]),
           buildInfoCard("License Number", data["pharmacyLicenseNumber"]),
           buildInfoCard("Address", "${data["street"]}, ${data["city"]}"),
-          buildInfoCard("About Us", data["aboutUs"]),
+          buildInfoCard("About Us", data["aboutUs"])
         ],
       ),
     );
